@@ -10,5 +10,6 @@ pytest-timeout == 1.4.2
 torchtext == 0.6.0
 torch >= 1.5.1
 torchvision >= 0.6.0
-# NOTE(msb) not a dependency but needed by torch
+
+# NOTE(msb) not a dependency but needed by torch and make its version fixed.
 numpy == 1.17.4
