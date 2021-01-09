@@ -10,17 +10,17 @@ version: 2
 # -------------------------------------------------------------------------------------
 # Environments to run the jobs in
 # -------------------------------------------------------------------------------------
-cpu_py37: &cpu
+cpu_py37: &cpu_py37
   docker:
     - image: circleci/python:3.7
   resource_class: medium
 
-cpu_py38: &cpu
+cpu_py38: &cpu_py38
   docker:
     - image: circleci/python:3.8
   resource_class: medium
 
-cpu_py39: &cpu
+cpu_py39: &cpu_py39
   docker:
     - image: circleci/python:3.9
   resource_class: medium
