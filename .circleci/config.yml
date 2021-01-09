@@ -74,7 +74,18 @@ install_dep_17_cpu: &install_dep_17_cpu
       name: Install Dependencies
       command: |
         sudo apt-get install -y libopenmpi-dev
-        pip install --progress-bar off torch==1.7.1 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install --progress-bar off torch==1.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install --progress-bar off -r requirements-test.txt
+        pip install --progress-bar off git+https://github.com/msbaines/torch_pg.git@c85c96f#egg=torch-pg
+        python -c 'import torch; print("Torch version:", torch.__version__)'
+        python -m torch.utils.collect_env
+
+install_dep_17_cpu_cu11: &install_dep_17_cpu_cu11
+  - run:
+      name: Install Dependencies
+      command: |
+        sudo apt-get install -y libopenmpi-dev
+        pip install --progress-bar off torch==1.7.1+cu110 -f https://download.pytorch.org/whl/torch_stable.html
         pip install --progress-bar off -r requirements-test.txt
         pip install --progress-bar off git+https://github.com/msbaines/torch_pg.git@c85c96f#egg=torch-pg
         python -c 'import torch; print("Torch version:", torch.__version__)'
@@ -258,7 +269,7 @@ jobs:
           keys:
             - cache-key-cpu-py39-{{ checksum "setup.py"}}-{{ checksum "requirements-test.txt"}}
 
-      - <<: *install_dep_17_cpu
+      - <<: *install_dep_17_cpu_cu11
 
       - save_cache:
           paths:
@@ -271,6 +282,8 @@ jobs:
 
       - store_test_results:
           path: test-results
+
+
 
   gpu_tests_15:
     <<: *gpu
