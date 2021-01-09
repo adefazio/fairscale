@@ -120,6 +120,32 @@ install_repo_gpu: &install_repo_gpu
         export CUDA_HOME=/usr/local/cuda-10.1
         pip install -e .
 
+
+run_isort: &run_isort
+   - run:
+       name: Run Linter (isort)
+       command: |
+         isort . --check
+
+run_black: &run_black
+   - run:
+       name: Run Linter (black)
+       command: |
+         black --check .
+
+run_mypy: &run_mypy
+   - run:
+       name: Run type-checking (mypy)
+       command: |
+         mypy --ignore-missing-imports --scripts-are-modules --pretty .
+
+run_flake8: &run_flake8
+  - run:
+      name: Run Linter (flake8)
+      command: |
+        flake8 --show-source --statistics
+
+
 run_coverage: &run_coverage
   - run:
       name: Run Unit Tests With Coverage
@@ -140,11 +166,6 @@ run_mpi_unittests: &run_mpi_unittests
       command: |
         mpirun -n 4 python -m pytest -p torch_pg.pytest --only-mpi --junitxml=test-results/junit.xml --verbose tests/nn/moe
 
-run_flake8: &run_flake8
-  - run:
-      name: Run Linter (flake8)
-      command: |
-        flake8 --show-source --statistics
 
 run_pipe_benchmark: &run_pipe_benchmark
   - run:
@@ -171,28 +192,6 @@ run_oss_amp: &run_oss_amp
        name: Run OSS with Torch AMP
        command: |
          python benchmarks/oss.py --amp --epochs 3 --optim_type oss_sharded_ddp
-
-run_cpu_tests: &run_cpu_tests
-   - run:
-       name: Run Linter (isort)
-       command: |
-         isort . --check
-
-   - run:
-       name: Run Linter (black)
-       command: |
-         black --check .
-
-   - run:
-       name: Run type-checking (mypy)
-       command: |
-         mypy --ignore-missing-imports --scripts-are-modules --pretty .
-
-   - <<: *run_flake8
-
-   - <<: *run_unittests
-
-   - <<: *run_mpi_unittests
 
 # -------------------------------------------------------------------------------------
 # Jobs to run
@@ -222,7 +221,12 @@ jobs:
 
       - <<: *install_repo_cpu
 
-      - <<: *run_cpu_tests
+      - <<: *run_isort
+      - <<: *run_black
+      - <<: *run_mypy
+      - <<: *run_flake8
+      - <<: *run_unittests
+      - <<: *run_mpi_unittests
 
       - store_test_results:
           path: test-results
@@ -250,7 +254,12 @@ jobs:
 
       - <<: *install_repo_cpu
 
-      - <<: *run_cpu_tests
+      - <<: *run_isort
+      - <<: *run_black
+      - <<: *run_mypy
+      - <<: *run_flake8
+      - <<: *run_unittests
+      - <<: *run_mpi_unittests
 
       - store_test_results:
           path: test-results
@@ -278,7 +287,12 @@ jobs:
 
       - <<: *install_repo_cpu
 
-      - <<: *run_cpu_tests
+      - <<: *run_isort
+      - <<: *run_black
+      - <<: *run_mypy
+      - <<: *run_flake8
+      - <<: *run_unittests
+      - <<: *run_mpi_unittests
 
       - store_test_results:
           path: test-results
